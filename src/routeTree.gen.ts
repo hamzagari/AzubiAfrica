@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as HowToApplyRouteImport } from './routes/how-to-apply'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as JobsIdRouteImport } from './routes/jobs.$id'
 
@@ -30,6 +31,11 @@ const HowToApplyRoute = HowToApplyRouteImport.update({
   path: '/how-to-apply',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JobsIndexRoute = JobsIndexRouteImport.update({
   id: '/jobs/',
   path: '/jobs/',
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/how-to-apply': typeof HowToApplyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/jobs/$id': typeof JobsIdRoute
   '/jobs/': typeof JobsIndexRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/how-to-apply': typeof HowToApplyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/jobs/$id': typeof JobsIdRoute
   '/jobs': typeof JobsIndexRoute
 }
@@ -60,21 +68,37 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/how-to-apply': typeof HowToApplyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/jobs/$id': typeof JobsIdRoute
   '/jobs/': typeof JobsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/how-to-apply' | '/jobs/$id' | '/jobs/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/how-to-apply'
+    | '/reset-password'
+    | '/jobs/$id'
+    | '/jobs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/how-to-apply' | '/jobs/$id' | '/jobs'
-  id: '__root__' | '/' | '/admin' | '/how-to-apply' | '/jobs/$id' | '/jobs/'
+  to:
+    '/' | '/admin' | '/how-to-apply' | '/reset-password' | '/jobs/$id' | '/jobs'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/how-to-apply'
+    | '/reset-password'
+    | '/jobs/$id'
+    | '/jobs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   HowToApplyRoute: typeof HowToApplyRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   JobsIdRoute: typeof JobsIdRoute
   JobsIndexRoute: typeof JobsIndexRoute
 }
@@ -102,6 +126,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HowToApplyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/jobs/': {
       id: '/jobs/'
       path: '/jobs'
@@ -123,6 +154,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   HowToApplyRoute: HowToApplyRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   JobsIdRoute: JobsIdRoute,
   JobsIndexRoute: JobsIndexRoute,
 }

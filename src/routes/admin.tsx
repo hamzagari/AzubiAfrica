@@ -55,11 +55,20 @@ function Admin() {
 
 function AuthForm() {
   const { t } = useI18n();
-  const [mode, setMode] = useState<"in" | "up">("in");
+  const [mode, setMode] = useState<"in" | "up" | "reset">("in");
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (mode === "reset") {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/reset-password",
+      });
+      if (error) return toast.error("Could not send the reset email. Please check the address and try again.");
+      toast.success("Reset email sent. Please check your inbox and spam folder.");
+      setMode("in");
+      return undefined;
+    }
     const { error, data } = mode === "in"
       ? await supabase.auth.signInWithPassword({ email, password: pw })
       : await supabase.auth.signUp({ email, password: pw, options: { emailRedirectTo: window.location.origin + "/admin" } });
@@ -69,14 +78,29 @@ function AuthForm() {
   };
   return (
     <div className="mx-auto max-w-sm px-4 py-16">
-      <h1 className="text-2xl font-bold text-primary">{mode === "in" ? t("login") : t("signup")}</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Admin-Bereich. Das erste registrierte Konto erhält Admin-Rechte.</p>
+      <h1 className="text-2xl font-bold text-primary">
+        {mode === "reset" ? "Reset password" : mode === "in" ? t("login") : t("signup")}
+      </h1>
+      <p className="mt-1 text-sm text-muted-foreground">
+        {mode === "reset"
+          ? "Enter your email address and we will send you a link to set a new password."
+          : "Admin-Bereich. Das erste registrierte Konto erhält Admin-Rechte."}
+      </p>
       <form onSubmit={submit} className="mt-6 space-y-3">
         <input className={input} type="email" required placeholder="E-Mail" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input className={input} type="password" required minLength={6} placeholder="Passwort" value={pw} onChange={(e) => setPw(e.target.value)} />
-        <button className="h-10 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground">{mode === "in" ? t("login") : t("signup")}</button>
+        {mode !== "reset" && (
+          <input className={input} type="password" required minLength={6} placeholder="Passwort" value={pw} onChange={(e) => setPw(e.target.value)} />
+        )}
+        <button className="h-10 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground">
+          {mode === "reset" ? "Send reset email" : mode === "in" ? t("login") : t("signup")}
+        </button>
       </form>
-      <button onClick={() => setMode(mode === "in" ? "up" : "in")} className="mt-4 text-sm text-success underline">
+      {mode === "in" && (
+        <button onClick={() => setMode("reset")} className="mt-3 block text-sm text-muted-foreground underline">
+          Forgot password?
+        </button>
+      )}
+      <button onClick={() => setMode(mode === "up" ? "in" : mode === "in" ? "up" : "in")} className="mt-4 text-sm text-success underline">
         {mode === "in" ? t("signup") : t("login")}
       </button>
     </div>
